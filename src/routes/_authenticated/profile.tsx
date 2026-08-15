@@ -125,6 +125,24 @@ function ProfilePage() {
           Save changes
         </Button>
       </form>
+
+      {!isAdmin && adminQuery.data && !adminQuery.data.exists ? (
+        <div className="card-civic mt-5 p-5">
+          <h2 className="flex items-center gap-2 text-lg font-semibold">
+            <ShieldCheck className="size-5 text-accent" /> City administrator setup
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            No administrator exists for this city yet. Claim the role once to unlock the admin
+            console with the live report map and report management. After the first administrator is
+            created this option disappears permanently — the role can never be self-granted again.
+          </p>
+          <Button className="mt-4 h-12" onClick={becomeAdmin} disabled={claiming}>
+            {claiming ? <Loader2 className="size-4 animate-spin" /> : null}
+            Become the city administrator
+          </Button>
+        </div>
+      ) : null}
+
     </AppShell>
   );
 }
