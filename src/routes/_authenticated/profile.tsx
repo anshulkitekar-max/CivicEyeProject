@@ -32,6 +32,32 @@ function ProfilePage() {
   const { user, profile, isAdmin, refreshProfile } = useAuth();
   const [fullName, setFullName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [claiming, setClaiming] = useState(false);
+
+  const checkAdmin = useServerFn(adminExists);
+  const claim = useServerFn(claimFirstAdmin);
+  const adminQuery = useQuery({ queryKey: ["admin-exists"], queryFn: () => checkAdmin({}) });
+
+  const becomeAdmin = async () => {
+    setClaiming(true);
+    try {
+      const result = await claim({});
+      if (result.granted) {
+        await refreshProfile();
+        toast.success(result.reason);
+        window.location.assign("/admin");
+      } else {
+        toast.error(result.reason);
+      }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Could not grant the admin role.");
+    } finally {
+      setClaiming(false);
+      void adminQuery.refetch();
+    }
+  };
+
+
 
   useEffect(() => {
     setFullName(profile?.full_name ?? "");
