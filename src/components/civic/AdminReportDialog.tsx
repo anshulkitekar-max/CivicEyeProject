@@ -32,7 +32,7 @@ export function AdminReportDialog({
   onOpenChange,
 }: {
   report: Report | null;
-  reporter?: Reporter;
+  reporter?: Reporter | undefined;
   onOpenChange: (open: boolean) => void;
 }) {
   const queryClient = useQueryClient();

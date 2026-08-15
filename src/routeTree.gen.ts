@@ -18,6 +18,8 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedReportRouteImport } from './routes/_authenticated/report'
 import { Route as AuthenticatedRewardsRouteImport } from './routes/_authenticated/rewards'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminReportsRouteImport } from './routes/_authenticated/admin/reports'
 import { Route as AuthenticatedMyReportsIndexRouteImport } from './routes/_authenticated/my-reports.index'
 import { Route as AuthenticatedMyReportsIdRouteImport } from './routes/_authenticated/my-reports.$id'
 
@@ -65,6 +67,17 @@ const AuthenticatedRewardsRoute = AuthenticatedRewardsRouteImport.update({
   path: '/rewards',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminReportsRoute =
+  AuthenticatedAdminReportsRouteImport.update({
+    id: '/reports',
+    path: '/reports',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedMyReportsIndexRoute =
   AuthenticatedMyReportsIndexRouteImport.update({
     id: '/my-reports/',
@@ -82,24 +95,27 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/admin': typeof AuthenticatedAdminRouteRoute
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/report': typeof AuthenticatedReportRoute
   '/rewards': typeof AuthenticatedRewardsRoute
+  '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/my-reports/$id': typeof AuthenticatedMyReportsIdRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/my-reports/': typeof AuthenticatedMyReportsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/admin': typeof AuthenticatedAdminRouteRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/report': typeof AuthenticatedReportRoute
   '/rewards': typeof AuthenticatedRewardsRoute
+  '/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/my-reports/$id': typeof AuthenticatedMyReportsIdRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/my-reports': typeof AuthenticatedMyReportsIndexRoute
 }
 export interface FileRoutesById {
@@ -108,12 +124,14 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRouteRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/report': typeof AuthenticatedReportRoute
   '/_authenticated/rewards': typeof AuthenticatedRewardsRoute
+  '/_authenticated/admin/reports': typeof AuthenticatedAdminReportsRoute
   '/_authenticated/my-reports/$id': typeof AuthenticatedMyReportsIdRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/my-reports/': typeof AuthenticatedMyReportsIndexRoute
 }
 export interface FileRouteTypes {
@@ -127,19 +145,22 @@ export interface FileRouteTypes {
     | '/profile'
     | '/report'
     | '/rewards'
+    | '/admin/reports'
     | '/my-reports/$id'
+    | '/admin/'
     | '/my-reports/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/register'
-    | '/admin'
     | '/dashboard'
     | '/profile'
     | '/report'
     | '/rewards'
+    | '/admin/reports'
     | '/my-reports/$id'
+    | '/admin'
     | '/my-reports'
   id:
     | '__root__'
@@ -152,7 +173,9 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/report'
     | '/_authenticated/rewards'
+    | '/_authenticated/admin/reports'
     | '/_authenticated/my-reports/$id'
+    | '/_authenticated/admin/'
     | '/_authenticated/my-reports/'
   fileRoutesById: FileRoutesById
 }
@@ -228,6 +251,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRewardsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/reports': {
+      id: '/_authenticated/admin/reports'
+      path: '/reports'
+      fullPath: '/admin/reports'
+      preLoaderRoute: typeof AuthenticatedAdminReportsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/my-reports/': {
       id: '/_authenticated/my-reports/'
       path: '/my-reports'
@@ -245,8 +282,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminReportsRoute: typeof AuthenticatedAdminReportsRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+}
+
+const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
+  {
+    AuthenticatedAdminReportsRoute: AuthenticatedAdminReportsRoute,
+    AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  }
+
+const AuthenticatedAdminRouteRouteWithChildren =
+  AuthenticatedAdminRouteRoute._addFileChildren(
+    AuthenticatedAdminRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRoute
+  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedReportRoute: typeof AuthenticatedReportRoute
@@ -256,7 +309,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRoute,
+  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedReportRoute: AuthenticatedReportRoute,
