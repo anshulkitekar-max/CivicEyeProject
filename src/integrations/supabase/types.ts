@@ -144,7 +144,24 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      leaderboard: {
+        Row: {
+          full_name: string | null
+          id: string | null
+          points: number | null
+        }
+        Insert: {
+          full_name?: string | null
+          id?: string | null
+          points?: number | null
+        }
+        Update: {
+          full_name?: string | null
+          id?: string | null
+          points?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       award_points: {
