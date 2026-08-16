@@ -144,29 +144,20 @@ export type Database = {
       }
     }
     Views: {
-      leaderboard: {
-        Row: {
-          full_name: string | null
-          id: string | null
-          points: number | null
-        }
-        Insert: {
-          full_name?: string | null
-          id?: string | null
-          points?: number | null
-        }
-        Update: {
-          full_name?: string | null
-          id?: string | null
-          points?: number | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       award_points: {
         Args: { _pts: number; _user_id: string }
         Returns: undefined
+      }
+      get_leaderboard: {
+        Args: { _limit?: number }
+        Returns: {
+          full_name: string
+          id: string
+          points: number
+        }[]
       }
       has_role: {
         Args: {
