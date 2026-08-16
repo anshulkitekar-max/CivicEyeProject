@@ -151,6 +151,14 @@ export type Database = {
         Args: { _pts: number; _user_id: string }
         Returns: undefined
       }
+      get_leaderboard: {
+        Args: { _limit?: number }
+        Returns: {
+          full_name: string
+          id: string
+          points: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
