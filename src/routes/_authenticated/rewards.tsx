@@ -27,13 +27,9 @@ function Rewards() {
   const leaderboard = useQuery({
     queryKey: ["leaderboard"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("id, full_name, points")
-        .order("points", { ascending: false })
-        .limit(20);
+      const { data, error } = await supabase.rpc("get_leaderboard", { _limit: 20 });
       if (error) throw error;
-      return data;
+      return data ?? [];
     },
   });
 
