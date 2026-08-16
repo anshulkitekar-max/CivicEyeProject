@@ -34,16 +34,18 @@ function Rewards() {
   });
 
   const myReports = useQuery({
-    queryKey: ["my-reports", user?.id],
+    queryKey: ["my-reports-count", user?.id],
     enabled: !!user,
-    queryFn: async () => {
-      const { count, error } = await supabase
+    queryFn: async (): Promise<number> => {
+      const { data, error } = await supabase
         .from("reports")
-        .select("id", { count: "exact", head: true });
+        .select("id")
+        .eq("user_id", user!.id);
       if (error) throw error;
-      return count ?? 0;
+      return data?.length ?? 0;
     },
   });
+
 
   const rank =
     (leaderboard.data ?? []).findIndex((p) => p.id === user?.id) + 1 || null;
